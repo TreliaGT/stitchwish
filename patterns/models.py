@@ -12,7 +12,7 @@ class Pattern(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     feature_image = models.ImageField(upload_to='patterns/images/')
-    instructions = models.JSONField()
+    instructions =  models.TextField()
     categories = models.ManyToManyField(Category, related_name='patterns')  # Use ManyToManyField for multiple categories
     time_to_make = models.CharField(max_length=100)  # e.g., "2 hours"
     material_list = models.TextField()

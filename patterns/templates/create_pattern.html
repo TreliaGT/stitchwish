@@ -1,22 +1,88 @@
 {% extends 'base.html' %}
-{% block title %}Pattern List{% endblock %}
+{% block title %}Create Pattern{% endblock %}
 {% block content %}
+<div class="container mt-5">
     <h1>Create Pattern</h1>
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }}">
+            {{ message|safe }}  <!-- Use safe to render HTML content -->
+        </div>
+    {% endfor %}
+{% endif %}
+
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.non_field_errors }}
+        <!-- Display non-field errors -->
+        <div class="mb-3">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </div>
 
+        <div class="mb-3">
+            {{ form.feature_image.label_tag }}
+            {{ form.feature_image }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.instructions.label_tag }}
+            {{ form.instructions }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.categories.label_tag }}
+            {{ form.categories }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.time_to_make.label_tag }}
+            {{ form.time_to_make }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.material_list.label_tag }}
+            {{ form.material_list }}
+        </div>
+
+        <div class="mb-3 form-check">
+            {{ form.is_paid }}
+            {{ form.is_paid.label_tag }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.website_link.label_tag }}
+            {{ form.website_link }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.youtube_link.label_tag }}
+            {{ form.youtube_link }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.pdf_file.label_tag }}
+            {{ form.pdf_file }}
+        </div>
 
         <h2>Gallery Images</h2>
-        <div id="gallery-images">
+        <div id="gallery-images" class="row">
             {{ formset.management_form }}  <!-- Management form for formset -->
             {% for gallery_image_form in formset %}
-                <div class="gallery-image-form">
-                    {{ gallery_image_form.as_p }}
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            {{ gallery_image_form.image.label_tag }}
+                            {{ gallery_image_form.image }}
+
+                            {{ gallery_image_form.caption.label_tag }}
+                            {{ gallery_image_form.caption }}
+                        </div>
+                    </div>
                 </div>
             {% endfor %}
         </div>
-        <button type="submit">Create Pattern</button>
+        <button type="submit" class="btn btn-primary">Create Pattern</button>
     </form>
-    <a href="{% url 'pattern_list' %}">Back to Pattern List</a>
+</div>
 {% endblock %}

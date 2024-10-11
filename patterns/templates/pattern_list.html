@@ -18,7 +18,14 @@
             <p class="card-text">{{ pattern.title }}</p>
             <div class="d-flex justify-content-between align-items-center">
             <div class="btn-group">
-                <a href="{% url 'add_to_wishlist' pattern.id %}" class="btn btn-sm btn-outline-secondary">Add to Wishlist</a>
+                {% if categories %}
+                    <a href="{% url 'remove_from_wishlist' pattern.id %}" class="btn btn-sm btn-outline-secondary">Remove Liked</a>
+                {% elif title == "My Patterns" %}
+                    <a href="{% url 'update_pattern' pattern.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <a href="{% url 'delete_pattern' pattern.id %}" class="btn btn-sm btn-outline-secondary">Delete</a>
+                {% else %}
+                    <a href="{% url 'add_to_wishlist' pattern.id %}" class="btn btn-sm btn-outline-secondary">Add to Liked</a>
+                {% endif %}
                 <a href="{% url 'pattern_detail' pattern.id %}" class="btn btn-sm btn-outline-secondary">View</a>
             </div>
             <small class="text-body-secondary">{{ pattern.time_to_make }}</small>

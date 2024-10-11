@@ -1,38 +1,93 @@
 {% extends 'base.html' %}
-{% block title %}Pattern List{% endblock %}
-{% block content %}
-<h1>{{ pattern.title }}</h1>
-<img src="{{ pattern.feature_image.url }}" alt="{{ pattern.title }}">
-<p><strong>Instructions:</strong></p>
-<ul>
-    {% for step in pattern.instructions %}
-        <li{% if forloop.counter == current_step %} style="background-color: yellow;"{% endif %}>
-            {{ forloop.counter }}. {{ step }}
-        </li>
-    {% endfor %}
-</ul>
-<p><strong>Categories:</strong> 
-    {% for category in pattern.categories.all %}
-        {{ category.name }}{% if not forloop.last %}, {% endif %}
-    {% endfor %}
-</p>
-<p><strong>Time to Make:</strong> {{ pattern.time_to_make }}</p>
-<p><strong>Materials:</strong> {{ pattern.material_list }}</p>
-<p><strong>Price:</strong> {% if pattern.is_paid %}Paid{% else %}Free{% endif %}</p>
-{% if pattern.website_link %}
-<p><a href="{{ pattern.website_link }}">Website Link</a></p>
-{% endif %}
-{% if pattern.youtube_link %}
-<p><a href="{{ pattern.youtube_link }}">YouTube Link</a></p>
-{% endif %}
 
-<h2>Gallery</h2>
-<div>
-    {% for image in pattern.gallery_images.all %}
-        <img src="{{ image.image.url }}" alt="{{ image.caption }}" style="width: 150px;">
-        {% if image.caption %}
-            <p>{{ image.caption }}</p>
+{% block title %}{{ pattern.title }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <!-- Feature Image -->
+        {% if pattern.feature_image %}
+        <div class="text-center mb-3">
+            <img src="{{ pattern.feature_image.url }}" alt="{{ pattern.title }}" class="img-fluid rounded shadow">
+        </div>
         {% endif %}
-    {% endfor %}
+
+        <!-- Pattern Title -->
+        <h1 class="mb-4">{{ pattern.title }}</h1>
+
+        <!-- Categories -->
+        {% if pattern.categories.all %}
+        <h5><strong>Categories:</strong></h5>
+        <div class="mb-3">
+            {% for category in pattern.categories.all %}
+            <span class="badge bg-primary">{{ category.name }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Time to Make -->
+        {% if pattern.time_to_make %}
+        <h5><strong>Time to Make:</strong></h5>
+        <p>{{ pattern.time_to_make }}</p>
+        {% endif %}
+
+        <!-- Price (only if it's a paid pattern) -->
+        {% if pattern.is_paid %}
+        <h5><strong>Price:</strong></h5>
+        <p>Paid</p>
+        {% endif %}
+
+        <!-- Website Link -->
+        {% if pattern.website_link %}
+        <p><a href="{{ pattern.website_link }}" target="_blank" class="btn btn-outline-primary">Visit Website</a></p>
+        {% endif %}
+
+        <!-- YouTube Link -->
+        {% if pattern.youtube_link %}
+        <p><a href="{{ pattern.youtube_link }}" target="_blank" class="btn btn-outline-danger">Watch on YouTube</a></p>
+        {% endif %}
+
+        <!-- PDF Download Link -->
+        {% if pattern.pdf_file %}
+        <p><a href="{{ pattern.pdf_file.url }}" download class="btn btn-outline-secondary">Download PDF</a></p>
+        {% endif %}
+
+
+        <!-- Materials -->
+        {% if pattern.material_list %}
+        <h5><strong>Materials:</strong></h5>
+        <p>{{ pattern.material_list }}</p>
+        {% endif %}
+
+        <!-- Instructions -->
+        {% if instructions %}
+        <h5><strong>Instructions:</strong></h5>
+        <ul class="list-group mb-3">
+            {% for step in instructions %}
+            <li class="list-group-item {% if forloop.counter == current_step %}bg-warning{% endif %}">
+                <strong>{{ forloop.counter }}.</strong> {{ step }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>No instructions available.</p>
+        {% endif %}
+
+        <!-- Gallery Images -->
+        {% if pattern.gallery_images.all %}
+        <h5><strong>Gallery Images:</strong></h5>
+        <div class="row">
+            {% for image in pattern.gallery_images.all %}
+            <div class="col-md-4 mb-3">
+                <img src="{{ image.image.url }}" alt="{{ image.caption }}" class="img-fluid rounded shadow">
+                {% if image.caption %}
+                <p class="text-center">{{ image.caption }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

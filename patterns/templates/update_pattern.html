@@ -1,24 +1,95 @@
 {% extends 'base.html' %}
-{% block title %}Pattern List{% endblock %}
+{% block title %}Update Pattern{% endblock %}
 {% block content %}
-<h1>Update Pattern</h1>
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-
-    <h2>Gallery Images</h2>
-    <div id="gallery-images">
-        {{ formset.management_form }}  <!-- Management form for formset -->
-        {% for gallery_image_form in formset %}
-            <div class="gallery-image-form">
-                {{ gallery_image_form.as_p }}
-                {% if gallery_image_form.instance.pk %}
-                    <p>Existing Image: <img src="{{ gallery_image_form.instance.image.url }}" alt="Gallery Image" width="100"></p>
-                {% endif %}
-            </div>
+<div class="container mt-5">
+    <h1>Update Pattern</h1>
+    {% if messages %}
+    <div class="alert alert-info">
+        {% for message in messages %}
+            <div>{{ message }}</div>
         {% endfor %}
     </div>
-    <button type="submit">Update Pattern</button>
-</form>
-<a href="{% url 'pattern_list' %}">Back to Pattern List</a>
+{% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="mb-3">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.feature_image.label_tag }}
+            {{ form.feature_image }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.instructions.label_tag }}
+            {{ form.instructions }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.categories.label_tag }}
+            {{ form.categories }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.time_to_make.label_tag }}
+            {{ form.time_to_make }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.material_list.label_tag }}
+            {{ form.material_list }}
+        </div>
+
+        <div class="mb-3 form-check">
+            {{ form.is_paid }}
+            {{ form.is_paid.label_tag }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.website_link.label_tag }}
+            {{ form.website_link }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.youtube_link.label_tag }}
+            {{ form.youtube_link }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.pdf_file.label_tag }}
+            {{ form.pdf_file }}
+        </div>
+
+        <h2>Gallery Images</h2>
+        <div id="gallery-images" class="row">
+            {{ formset.management_form }}  <!-- Management form for formset -->
+            {% for gallery_image_form in formset %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            {{ gallery_image_form.image.label_tag }}
+                            {{ gallery_image_form.image }}
+
+                            {{ gallery_image_form.caption.label_tag }}
+                            {{ gallery_image_form.caption }}
+                            
+                            {% if gallery_image_form.instance.pk %}
+                                <p>Existing Image: <img src="{{ gallery_image_form.instance.image.url }}" alt="Gallery Image" class="img-fluid"></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Update Pattern</button>
+    </form>
+
+    <a href="{% url 'pattern_list' %}" class="btn btn-secondary mt-3">Back to Pattern List</a>
+</div>
 {% endblock %}

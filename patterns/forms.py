@@ -17,6 +17,18 @@ class PatternForm(forms.ModelForm):
             'youtube_link',
             'pdf_file',
         ]
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'feature_image': forms.FileInput(attrs={'class': 'form-control'}),
+            'instructions': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Enter each instruction on a new line'}),
+            'categories': forms.SelectMultiple(attrs={'class': 'form-control'}),  # Multiple select for categories
+            'time_to_make': forms.TextInput(attrs={'class': 'form-control'}),
+            'material_list': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'is_paid': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'website_link': forms.URLInput(attrs={'class': 'form-control'}),
+            'youtube_link': forms.URLInput(attrs={'class': 'form-control'}),
+            'pdf_file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
 
 # Create a formset for GalleryImage
 GalleryImageFormSet = modelformset_factory(GalleryImage, fields=('image', 'caption'), extra=6)
