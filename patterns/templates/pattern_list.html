@@ -6,8 +6,12 @@
     <div class="d-flex gap-2 justify-content-center py-5">
         {% for category in categories %}
             <a href="{% url 'category_patterns' category.id %}" class="btn btn-primary rounded-pill px-3">{{ category.name }}</a>
+        {% empty %}
+            <p>No categories available.</p>  <!-- This will show if categories are empty -->
         {% endfor %}
     </div>
+{% else %}
+    <p>No categories available.</p>  <!-- This will show if categories are not present -->
 {% endif %}
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-3">
     {% for pattern in patterns %}

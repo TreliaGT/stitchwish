@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import PatternForm, GalleryImageFormSet
 from django.contrib import messages
 import json 
+
 @login_required
 def pattern_list(request):
     patterns = Pattern.objects.all()
@@ -75,6 +76,8 @@ def create_pattern(request):
             pattern.instructions =  json.dumps(instructions_list)  # Store as a list
 
             pattern.save()
+
+            form.save_m2m()
             # Save gallery images
             for gallery_image in formset:
                 if gallery_image.cleaned_data and gallery_image.cleaned_data['image']:
