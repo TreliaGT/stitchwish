@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Pattern List{% endblock %}
+{% block content %}
 <h1>Delete Pattern</h1>
 <p>Are you sure you want to delete the pattern "{{ pattern.title }}"?</p>
 <form method="POST">
@@ -5,3 +8,4 @@
     <button type="submit">Confirm Deletion</button>
 </form>
 <a href="{% url 'pattern_list' %}">Cancel</a>
+{% endblock %}

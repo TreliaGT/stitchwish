@@ -1,12 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Pattern List{% endblock %}
+{% block content %}
 <h1>Pattern Gallery</h1>
-<ul>
+{% if categories %}
+    <div class="d-flex gap-2 justify-content-center py-5">
+        {% for category in categories %}
+            <a href="{% url 'category_patterns' category.id %}" class="btn btn-primary rounded-pill px-3">{{ category.name }}</a>
+        {% endfor %}
+    </div>
+{% endif %}
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-3">
     {% for pattern in patterns %}
-    <li>
-        <a href="{% url 'pattern_detail' pattern.pk %}">
-            <img src="{{ pattern.feature_image.url }}" alt="{{ pattern.title }}" style="width: 100px;">
-            <h2>{{ pattern.title }}</h2>
-            <a href="{% url 'add_to_wishlist' pattern.id %}">Add to Wishlist</a>
-        </a>
-    </li>
+    <div class="col">
+        <div class="card shadow-sm">
+            <a href=""><img src="{{ pattern.feature_image.url }}" alt="{{ pattern.title }}" style="width: 100%; height:300px; object-fit: cover;"></a>
+        <div class="card-body">
+            <p class="card-text">{{ pattern.title }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+                <a href="{% url 'add_to_wishlist' pattern.id %}" class="btn btn-sm btn-outline-secondary">Add to Wishlist</a>
+                <a href="{% url 'pattern_detail' pattern.id %}" class="btn btn-sm btn-outline-secondary">View</a>
+            </div>
+            <small class="text-body-secondary">{{ pattern.time_to_make }}</small>
+            </div>
+        </div>
+        </div>
+    </div>
     {% endfor %}
-</ul>
+</div>
+{% endblock %}

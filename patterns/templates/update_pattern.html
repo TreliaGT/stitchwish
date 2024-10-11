@@ -1,7 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Pattern List{% endblock %}
+{% block content %}
 <h1>Update Pattern</h1>
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
+
+    <h2>Gallery Images</h2>
+    <div id="gallery-images">
+        {{ formset.management_form }}  <!-- Management form for formset -->
+        {% for gallery_image_form in formset %}
+            <div class="gallery-image-form">
+                {{ gallery_image_form.as_p }}
+                {% if gallery_image_form.instance.pk %}
+                    <p>Existing Image: <img src="{{ gallery_image_form.instance.image.url }}" alt="Gallery Image" width="100"></p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
     <button type="submit">Update Pattern</button>
 </form>
 <a href="{% url 'pattern_list' %}">Back to Pattern List</a>
+{% endblock %}

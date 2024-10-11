@@ -1,7 +1,22 @@
-<h1>Create Pattern</h1>
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Pattern</button>
-</form>
-<a href="{% url 'pattern_list' %}">Back to Pattern List</a>
+{% extends 'base.html' %}
+{% block title %}Pattern List{% endblock %}
+{% block content %}
+    <h1>Create Pattern</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+
+        <h2>Gallery Images</h2>
+        <div id="gallery-images">
+            {{ formset.management_form }}  <!-- Management form for formset -->
+            {% for gallery_image_form in formset %}
+                <div class="gallery-image-form">
+                    {{ gallery_image_form.as_p }}
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit">Create Pattern</button>
+    </form>
+    <a href="{% url 'pattern_list' %}">Back to Pattern List</a>
+{% endblock %}

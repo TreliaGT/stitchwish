@@ -21,9 +21,9 @@ from django.urls import path, include
 from accounts.views import login_view, register
 
 urlpatterns = [
-    #path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('', login_view, name='home'),
-    path('/register', register, name='register'),
+    path('register', register, name='register'),
     path('', include('accounts.urls')),
     path('', include('patterns.urls')),
 ]

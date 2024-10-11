@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Pattern List{% endblock %}
+{% block content %}
 <h1>{{ pattern.title }}</h1>
 <img src="{{ pattern.feature_image.url }}" alt="{{ pattern.title }}">
 <p><strong>Instructions:</strong></p>
@@ -32,3 +35,4 @@
         {% endif %}
     {% endfor %}
 </div>
+{% endblock %}

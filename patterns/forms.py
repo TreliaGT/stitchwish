@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import modelformset_factory
 from .models import Pattern, GalleryImage
 
 class PatternForm(forms.ModelForm):
@@ -17,7 +18,5 @@ class PatternForm(forms.ModelForm):
             'pdf_file',
         ]
 
-class GalleryImageForm(forms.ModelForm):
-    class Meta:
-        model = GalleryImage
-        fields = ['image', 'caption']
+# Create a formset for GalleryImage
+GalleryImageFormSet = modelformset_factory(GalleryImage, fields=('image', 'caption'), extra=6)
