@@ -16,6 +16,7 @@ class PatternForm(forms.ModelForm):
             'website_link',
             'youtube_link',
             'pdf_file',
+            'pdf_link'
         ]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
@@ -28,6 +29,7 @@ class PatternForm(forms.ModelForm):
             'website_link': forms.URLInput(attrs={'class': 'form-control'}),
             'youtube_link': forms.URLInput(attrs={'class': 'form-control'}),
             'pdf_file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'pdf_link': forms.URLInput(attrs={'class': 'form-control'}),
         }
 
 # Create a formset for GalleryImage

@@ -19,7 +19,7 @@ class Pattern(models.Model):
     is_paid = models.BooleanField(default=False)
     website_link = models.URLField(blank=True, null=True)
     youtube_link = models.URLField(blank=True, null=True)
-    PDF_link = models.URLField(blank=True, null=True)
+    pdf_link = models.URLField(blank=True, null=True)
     pdf_file = models.FileField(upload_to='patterns/pdfs/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

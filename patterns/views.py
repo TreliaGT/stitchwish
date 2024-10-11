@@ -3,6 +3,7 @@ from .models import Pattern ,Category , PatternUser , GalleryImage
 from django.contrib.auth.decorators import login_required
 from .forms import PatternForm, GalleryImageFormSet
 from django.contrib import messages
+from django.core.files.storage import default_storage 
 import json 
 
 @login_required
@@ -154,6 +155,20 @@ def update_pattern(request, pattern_id):
 def delete_pattern(request, pattern_id):
     pattern = get_object_or_404(Pattern, id=pattern_id, user=request.user)  # Ensure the user owns the pattern
     if request.method == "POST":
+        # Delete associated gallery images if any
+        if pattern.feature_image:
+            default_storage.delete(pattern.feature_image) 
+
+        # Delete the PDF file if it exists
+        if pattern.pdf_file:
+            default_storage.delete(pattern.pdf_file)  # Delete the PDF file
+
+        gallery_images = GalleryImage.objects.filter(pattern=pattern)  # Get associated gallery images
+        for image in gallery_images:
+            if image.image:  # Assuming 'image' is the field name for the image in the GalleryImage model
+                default_storage.delete(image.image.name)  # Delete the gallery image file
+            image.delete()  # Delete the gallery image instance
+
         pattern.delete()  # Delete the pattern
         return redirect('pattern_list')  # Redirect to the pattern list page
     return render(request, 'delete_pattern.html', {'pattern': pattern})
