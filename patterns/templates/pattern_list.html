@@ -5,6 +5,7 @@
         <a href="{% url 'pattern_detail' pattern.pk %}">
             <img src="{{ pattern.feature_image.url }}" alt="{{ pattern.title }}" style="width: 100px;">
             <h2>{{ pattern.title }}</h2>
+            <a href="{% url 'add_to_wishlist' pattern.id %}">Add to Wishlist</a>
         </a>
     </li>
     {% endfor %}

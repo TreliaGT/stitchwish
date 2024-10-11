@@ -9,6 +9,7 @@ class Category(models.Model):
     
 # Create your models here.
 class Pattern(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     feature_image = models.ImageField(upload_to='patterns/images/')
     instructions = models.JSONField()
@@ -37,9 +38,7 @@ class GalleryImage(models.Model):
 class PatternUser(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     pattern = models.ForeignKey(Pattern, on_delete=models.CASCADE)
-    project_count = models.IntegerField(default=0)  # Count of projects associated with this user and pattern
-    is_wishlist = models.BooleanField(default=False)
-    is_project = models.BooleanField(default=False)
+
     def __str__(self):
         return f"{self.user.username} - {self.pattern.title}"
     
