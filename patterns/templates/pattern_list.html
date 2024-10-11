@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Pattern List{% endblock %}
 {% block content %}
-<h1>Pattern Gallery</h1>
+<h1>{{ title }}</h1>
 {% if categories %}
     <div class="d-flex gap-2 justify-content-center py-5">
         {% for category in categories %}
