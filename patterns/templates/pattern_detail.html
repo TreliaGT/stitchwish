@@ -1,0 +1,34 @@
+<h1>{{ pattern.title }}</h1>
+<img src="{{ pattern.feature_image.url }}" alt="{{ pattern.title }}">
+<p><strong>Instructions:</strong></p>
+<ul>
+    {% for step in pattern.instructions %}
+        <li{% if forloop.counter == current_step %} style="background-color: yellow;"{% endif %}>
+            {{ forloop.counter }}. {{ step }}
+        </li>
+    {% endfor %}
+</ul>
+<p><strong>Categories:</strong> 
+    {% for category in pattern.categories.all %}
+        {{ category.name }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</p>
+<p><strong>Time to Make:</strong> {{ pattern.time_to_make }}</p>
+<p><strong>Materials:</strong> {{ pattern.material_list }}</p>
+<p><strong>Price:</strong> {% if pattern.is_paid %}Paid{% else %}Free{% endif %}</p>
+{% if pattern.website_link %}
+<p><a href="{{ pattern.website_link }}">Website Link</a></p>
+{% endif %}
+{% if pattern.youtube_link %}
+<p><a href="{{ pattern.youtube_link }}">YouTube Link</a></p>
+{% endif %}
+
+<h2>Gallery</h2>
+<div>
+    {% for image in pattern.gallery_images.all %}
+        <img src="{{ image.image.url }}" alt="{{ image.caption }}" style="width: 150px;">
+        {% if image.caption %}
+            <p>{{ image.caption }}</p>
+        {% endif %}
+    {% endfor %}
+</div>

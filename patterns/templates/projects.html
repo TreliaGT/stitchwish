@@ -1,0 +1,19 @@
+<h1>Your Projects</h1>
+
+{% if user_patterns %}
+    <ul>
+        {% for pattern in user_patterns %}
+            <li>
+                <h3>{{ pattern.title }}</h3>
+                <img src="{{ pattern.feature_image.url }}" alt="{{ pattern.title }}" style="width: 100px;">
+                <p>Time to Make: {{ pattern.time_to_make }}</p>
+                <p>Paid: {{ pattern.is_paid|yesno:"Yes,No" }}</p>
+                <p><a href="{{ pattern.website_link }}">Website</a></p>
+                <p><a href="{{ pattern.youtube_link }}">YouTube</a></p>
+                <p>Created on: {{ pattern.created_at }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no projects.</p>
+{% endif %}
