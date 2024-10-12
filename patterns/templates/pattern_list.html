@@ -1,42 +1,45 @@
 {% extends 'base.html' %}
 {% block title %}Pattern List{% endblock %}
 {% block content %}
-<h1>{{ title }}</h1>
+<h1 class="text-center">{{ title }}</h1>
+
 {% if categories %}
-    <div class="d-flex gap-2 justify-content-center py-5">
+    <div class="d-flex flex-wrap gap-2 justify-content-center py-5">
         {% for category in categories %}
             <a href="{% url 'category_patterns' category.id %}" class="btn btn-primary rounded-pill px-3">{{ category.name }}</a>
-        {% empty %}
-            <p>No categories available.</p>  <!-- This will show if categories are empty -->
         {% endfor %}
     </div>
 {% else %}
-    <p>No categories available.</p>  <!-- This will show if categories are not present -->
+    <p class="text-center">No categories available.</p> <!-- This will show if categories are not present -->
 {% endif %}
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-3">
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mt-3">
     {% for pattern in patterns %}
     <div class="col">
-        <div class="card shadow-sm">
-            <a href=""><img src="{{ pattern.feature_image.url }}" alt="{{ pattern.title }}" style="width: 100%; height:300px; object-fit: cover;"></a>
-        <div class="card-body">
-            <p class="card-text">{{ pattern.title }}</p>
-            <div class="d-flex justify-content-between align-items-center">
-            <div class="btn-group">
-                {% if categories %}
-                    <a href="{% url 'remove_from_wishlist' pattern.id %}" class="btn btn-sm btn-outline-secondary">Remove Liked</a>
-                {% elif title == "My Patterns" %}
-                    <a href="{% url 'update_pattern' pattern.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                    <a href="{% url 'delete_pattern' pattern.id %}" class="btn btn-sm btn-outline-secondary">Delete</a>
-                {% else %}
-                    <a href="{% url 'add_to_wishlist' pattern.id %}" class="btn btn-sm btn-outline-secondary">Add to Liked</a>
-                {% endif %}
-                <a href="{% url 'pattern_detail' pattern.id %}" class="btn btn-sm btn-outline-secondary">View</a>
+        <div class="card shadow-sm h-100">
+            <a href="{% url 'pattern_detail' pattern.id %}">
+                <img src="{{ pattern.feature_image.url }}" alt="{{ pattern.title }}" class="card-img-top" style="height: 300px; object-fit: cover;">
+            </a>
+            <div class="card-body">
+                <p class="card-text text-center">{{ pattern.title }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        {% if categories %}
+                            <a href="{% url 'remove_from_wishlist' pattern.id %}" class="btn btn-sm btn-outline-secondary">Remove Liked</a>
+                        {% elif title == "My Patterns" %}
+                            <a href="{% url 'update_pattern' pattern.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <a href="{% url 'delete_pattern' pattern.id %}" class="btn btn-sm btn-outline-secondary">Delete</a>
+                        {% else %}
+                            <a href="{% url 'add_to_wishlist' pattern.id %}" class="btn btn-sm btn-outline-secondary">Add to Liked</a>
+                        {% endif %}
+                        <a href="{% url 'pattern_detail' pattern.id %}" class="btn btn-sm btn-outline-secondary">View</a>
+                    </div>
+                    <small class="text-body-secondary">{{ pattern.time_to_make }}</small>
+                </div>
             </div>
-            <small class="text-body-secondary">{{ pattern.time_to_make }}</small>
-            </div>
-        </div>
         </div>
     </div>
     {% endfor %}
 </div>
+
 {% endblock %}

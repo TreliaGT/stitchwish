@@ -10,14 +10,16 @@ import json
 def pattern_list(request):
     patterns = Pattern.objects.all()
     categories = Category.objects.all()
+    print(f"Categories: {categories}")
     return render(request, 'pattern_list.html', {'patterns': patterns , 'categories' : categories , 'title' : "Patterns Listing"})
+
 
 @login_required
 def category_patterns(request, category_id):
     category = get_object_or_404(Category, id=category_id)  # Get the category by ID
     patterns = category.patterns.all()  # Retrieve all patterns associated with this category
     categories = Category.objects.all()
-    return render(request, 'pattern_list.html', {'category': category, 'patterns': patterns , 'categories' : categories})
+    return render(request, 'pattern_list.html', {'category': category, 'patterns': patterns , 'categories' : categories , 'title' : category.name})
 
 @login_required
 def pattern_detail(request, pk):
@@ -32,11 +34,10 @@ def pattern_detail(request, pk):
 def liked(request):
     wishlist_entries = PatternUser.objects.filter(user=request.user)
     patterns = [entry.pattern for entry in wishlist_entries]
-    categories = Category.objects.all()
-    return render(request, 'pattern_list.html', {'patterns': patterns , 'categories' : categories, 'title' : "My Liked List"})
+    return render(request, 'pattern_list.html', {'patterns': patterns ,  'title' : "My Liked List"})
 
 @login_required
-def pattern_list(request):
+def my_pattern_list(request):
     patterns = Pattern.objects.filter(user=request.user)  # Only get patterns for the logged-in user
     return render(request, 'pattern_list.html', {'patterns': patterns, 'title' : "My Patterns"})
 
@@ -115,7 +116,11 @@ def update_pattern(request, pattern_id):
     pattern = get_object_or_404(Pattern, id=pattern_id, user=request.user)
     if request.method == "POST":
         form = PatternForm(request.POST, request.FILES, instance=pattern)
-        formset = GalleryImageFormSet(request.POST, request.FILES, queryset=pattern.galleryimage_set.all())
+        if pattern.gallery_images.exists():
+            formset = GalleryImageFormSet(request.POST, request.FILES, queryset=pattern.gallery_images.all())
+        else:
+            formset = GalleryImageFormSet(request.POST, request.FILES, queryset=GalleryImage.objects.none())
+
         if form.is_valid() and formset.is_valid():
             # Convert instructions to JSON format
             pattern = form.save(commit=False)
@@ -132,12 +137,9 @@ def update_pattern(request, pattern_id):
             form.save_m2m()  # Save the categories
                 
             # Save new gallery images
-            try:
-                for gallery_image in formset:
-                    if gallery_image.cleaned_data and gallery_image.cleaned_data['image']:
-                        GalleryImage.objects.create(pattern=pattern, **gallery_image.cleaned_data)
-            except:
-                pass
+            for gallery_image in formset:
+                if gallery_image.cleaned_data and gallery_image.cleaned_data.get('image'):
+                    GalleryImage.objects.create(pattern=pattern, **gallery_image.cleaned_data)
             messages.success(request, 'Pattern updated successfully!')
             return redirect('pattern_list')
 
@@ -145,10 +147,11 @@ def update_pattern(request, pattern_id):
             messages.error(request, 'Please correct the errors below.')
     else:
         form = PatternForm(instance=pattern)
-        try:
-            formset = GalleryImageFormSet(queryset=pattern.gallery_images.all())  # Populate formset with existing images
-        except:
-            formset = GalleryImageFormSet(queryset=GalleryImage.objects.none())  
+        if pattern.gallery_images.exists():
+            formset = GalleryImageFormSet(request.POST, request.FILES, queryset=pattern.gallery_images.all())
+        else:
+            formset = GalleryImageFormSet(request.POST, request.FILES, queryset=GalleryImage.objects.none())
+            
     return render(request, 'update_pattern.html', {'form': form, 'formset': formset})
 
 @login_required
