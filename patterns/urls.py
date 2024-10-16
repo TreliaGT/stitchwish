@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import pattern_list, pattern_detail , liked ,pattern_list ,add_to_wishlist, category_patterns , create_pattern, update_pattern, delete_pattern, remove_from_wishlist,my_pattern_list
+from .views import search, pattern_list, pattern_detail , liked ,pattern_list ,add_to_wishlist, category_patterns , create_pattern, update_pattern, delete_pattern, remove_from_wishlist,my_pattern_list
 
 urlpatterns = [
     path('patterns/', pattern_list, name='pattern_list'),
@@ -12,4 +12,5 @@ urlpatterns = [
     path('patterns/create/', create_pattern, name='create_pattern'),
     path('patterns/update/<int:pattern_id>/', update_pattern, name='update_pattern'),
     path('patterns/delete/<int:pattern_id>/', delete_pattern, name='delete_pattern'),
+    path('patterns/search/', search, name='search'),
 ]

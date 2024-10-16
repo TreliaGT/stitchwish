@@ -1,17 +1,23 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Pattern ,Category , PatternUser , GalleryImage
 from django.contrib.auth.decorators import login_required
-from .forms import PatternForm, GalleryImageFormSet
+from django.core.paginator import Paginator
+from .forms import PatternForm, GalleryImageFormSet , SearchForm
 from django.contrib import messages
 from django.core.files.storage import default_storage 
 import json 
 
 @login_required
 def pattern_list(request):
+    form = SearchForm()
     patterns = Pattern.objects.all()
+    paginator = Paginator(patterns, 12) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     categories = Category.objects.all()
+    liked_patterns = PatternUser.objects.filter(user=request.user).values_list('pattern_id', flat=True)
     print(f"Categories: {categories}")
-    return render(request, 'pattern_list.html', {'patterns': patterns , 'categories' : categories , 'title' : "Patterns Listing"})
+    return render(request, 'pattern_list.html', {'patterns': page_obj , 'categories' : categories , 'title' : "Patterns Listing" ,  'liked_patterns': liked_patterns , 'form': form})
 
 
 @login_required
@@ -19,7 +25,11 @@ def category_patterns(request, category_id):
     category = get_object_or_404(Category, id=category_id)  # Get the category by ID
     patterns = category.patterns.all()  # Retrieve all patterns associated with this category
     categories = Category.objects.all()
-    return render(request, 'pattern_list.html', {'category': category, 'patterns': patterns , 'categories' : categories , 'title' : category.name})
+    paginator = Paginator(patterns, 12) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    liked_patterns = PatternUser.objects.filter(user=request.user).values_list('pattern_id', flat=True)
+    return render(request, 'pattern_list.html', {'category': category, 'patterns': page_obj , 'categories' : categories , 'title' : category.name ,  'liked_patterns': liked_patterns})
 
 @login_required
 def pattern_detail(request, pk):
@@ -34,13 +44,34 @@ def pattern_detail(request, pk):
 def liked(request):
     wishlist_entries = PatternUser.objects.filter(user=request.user)
     patterns = [entry.pattern for entry in wishlist_entries]
-    return render(request, 'pattern_list.html', {'patterns': patterns ,  'title' : "My Liked List"})
+    liked_patterns = PatternUser.objects.filter(user=request.user).values_list('pattern_id', flat=True)
+    paginator = Paginator(patterns, 12) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'pattern_list.html', {'patterns': page_obj ,  'title' : "My Liked List" ,  'liked_patterns': liked_patterns})
 
 @login_required
 def my_pattern_list(request):
     patterns = Pattern.objects.filter(user=request.user)  # Only get patterns for the logged-in user
-    return render(request, 'pattern_list.html', {'patterns': patterns, 'title' : "My Patterns"})
+    paginator = Paginator(patterns, 12) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'pattern_list.html', {'patterns': page_obj, 'title' : "My Patterns"})
 
+@login_required
+def search(request):
+    form = SearchForm()
+    results = []
+
+    if 'query' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            results = Pattern.objects.filter(title__icontains=query)  # Search in titles
+            # You can also search in descriptions or other fields
+            # results = Pattern.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+    return render(request, 'pattern_list.html', {'form': form, 'patterns': results})
 
 @login_required
 def add_to_wishlist(request, pattern_id):

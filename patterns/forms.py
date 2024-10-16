@@ -34,3 +34,8 @@ class PatternForm(forms.ModelForm):
 
 # Create a formset for GalleryImage
 GalleryImageFormSet = modelformset_factory(GalleryImage, fields=('image', 'caption'), extra=6)
+
+
+
+class SearchForm(forms.Form):
+    query = forms.CharField(label='Search', max_length=100)
