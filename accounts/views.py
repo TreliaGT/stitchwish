@@ -10,7 +10,9 @@ def register(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
-            messages.success(request, 'Registration successful. You can now log in.')
+            # Log the user in immediately after registration
+            login(request, user)
+            messages.success(request, 'Registration successful. You are now logged in.')
             return redirect('pattern_list')
     else:
         form = UserRegistrationForm()
