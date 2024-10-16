@@ -33,7 +33,15 @@ class PatternForm(forms.ModelForm):
         }
 
 # Create a formset for GalleryImage
-GalleryImageFormSet = modelformset_factory(GalleryImage, fields=('image', 'caption'), extra=6)
+class GalleryImageForm(forms.ModelForm):
+    class Meta:
+        model = GalleryImage
+        fields = ['image' , 'caption']
+    
+    image = forms.ImageField(required=False) 
+    caption = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Enter caption...'}))
+
+GalleryImageFormSet = modelformset_factory(GalleryImage, form=GalleryImageForm, extra=6 ,  can_delete=True)
 
 
 

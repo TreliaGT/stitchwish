@@ -10,7 +10,19 @@
         {% endfor %}
     </div>
 {% endif %}
-
+ <!-- Display form errors -->
+ {% if form.errors %}
+ <div class="alert alert-danger">
+     <strong>Errors:</strong>
+     <ul>
+     {% for field, errors in form.errors.items %}
+         {% for error in errors %}
+             <li>{{ field }}: {{ error }}</li>
+         {% endfor %}
+     {% endfor %}
+     </ul>
+ </div>
+{% endif %}
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.non_field_errors }}
@@ -67,27 +79,48 @@
         </div>
 
         <h2>Gallery Images</h2>
-        <div id="gallery-images" class="row">
-            {{ formset.management_form }}  <!-- Management form for formset -->
-            {% for gallery_image_form in formset %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            {{ gallery_image_form.image.label_tag }}
-                            {{ gallery_image_form.image }}
+<div id="gallery-images" class="row">
+    {{ formset.management_form }}
 
-                            {{ gallery_image_form.caption.label_tag }}
-                            {{ gallery_image_form.caption }}
-                            
-                            {% if gallery_image_form.instance.pk %}
-                                <p>Existing Image: <img src="{{ gallery_image_form.instance.image.url }}" alt="Gallery Image" class="img-fluid"></p>
-                            {% endif %}
+    {% for gallery_image_form in formset %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+
+                    {% if gallery_image_form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Errors:</strong>
+                            <ul>
+                                {% for field, errors in gallery_image_form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ field }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
                         </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+                    {% endif %}
 
+                    {{ gallery_image_form.image.label_tag }} 
+                    {{ gallery_image_form.image }} <!-- Image input -->
+                    
+                    {{ gallery_image_form.caption.label_tag }} 
+                    {{ gallery_image_form.caption }} <!-- Caption input -->
+
+                    {% if gallery_image_form.instance.pk %}
+                        <p>Existing Image: <img src="{{ gallery_image_form.instance.image.url }}" alt="Gallery Image" class="img-fluid"></p>
+                    {% endif %}
+
+                    {% if gallery_image_form.can_delete %}
+                        <label for="{{ gallery_image_form.prefix }}-DELETE">Delete:</label>
+                        {{ gallery_image_form.DELETE }} <!-- Checkbox for deletion -->
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+        
         <button type="submit" class="btn btn-primary mt-3">Update Pattern</button>
     </form>
 
