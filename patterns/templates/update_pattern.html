@@ -35,7 +35,9 @@
         <div class="mb-3">
             {{ form.feature_image.label_tag }}
             {{ form.feature_image }}
-            
+            {% if form.feature_image.instance.pk and form.feature_image.instance.feature_image %}
+                <p>Existing Image: <img src="{{ form.feature_image.instance.feature_image.url }}" alt="Feature Image" class="img-fluid"></p>
+            {% endif %}
         </div>
 
         <div class="mb-3">
@@ -106,10 +108,9 @@
                     {{ gallery_image_form.caption.label_tag }} 
                     {{ gallery_image_form.caption }} <!-- Caption input -->
 
-                    {% if gallery_image_form.instance.pk %}
-                        <p>Existing Image: <img src="{{ gallery_image_form.instance.image.url }}" alt="Gallery Image" class="img-fluid"></p>
-                    {% endif %}
-
+                   {% if gallery_image_form.instance.pk %}
+                    <p>Existing Image: <img src="{{ gallery_image_form.instance.image.url }}" alt="Gallery Image" class="img-fluid"></p>
+                {% endif %}
                     {% if gallery_image_form.can_delete %}
                         <label for="{{ gallery_image_form.prefix }}-DELETE">Delete:</label>
                         {{ gallery_image_form.DELETE }} <!-- Checkbox for deletion -->
