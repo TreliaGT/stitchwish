@@ -109,23 +109,24 @@ def create_pattern(request):
             pattern.instructions =  json.dumps(instructions_list)  # Store as a list
 
             pattern.save()
-
             form.save_m2m()
+            
             # Save gallery images
-            for gallery_image in formset:
-                if gallery_image.cleaned_data and gallery_image.cleaned_data['image']:
-                    GalleryImage.objects.create(pattern=pattern, **gallery_image.cleaned_data)
+            for gallery_image_form in formset:
+                if gallery_image_form.cleaned_data and not gallery_image_form.cleaned_data.get('DELETE', False):
+                    if gallery_image_form.cleaned_data['image']:
+                        GalleryImage.objects.create(pattern=pattern, **gallery_image_form.cleaned_data)
 
             messages.success(request, 'Pattern created successfully!')
             return redirect('pattern_list')
         else:
+            # Error handling
             error_messages = []
             for field in form:
                 for error in field.errors:
                     error_messages.append(f"{field.label}: {error}")
             for error in form.non_field_errors():
                 error_messages.append(error)
-            # Add formset errors
             for gallery_image_form in formset:
                 for error in gallery_image_form.non_field_errors():
                     error_messages.append(error)
@@ -133,7 +134,6 @@ def create_pattern(request):
                     for error in field.errors:
                         error_messages.append(f"{field.label}: {error}")
 
-            # Join all errors into a single message
             error_message = "Please correct the following errors:<br>" + "<br>".join(error_messages)
             messages.error(request, error_message)
     else:
@@ -142,48 +142,38 @@ def create_pattern(request):
 
     return render(request, 'create_pattern.html', {'form': form, 'formset': formset})
 
+
 @login_required
 def update_pattern(request, pattern_id):
     pattern = get_object_or_404(Pattern, id=pattern_id, user=request.user)
-
+    
     if request.method == "POST":
         form = PatternForm(request.POST, request.FILES, instance=pattern)
-        formset = GalleryImageFormSet(request.POST, request.FILES, queryset=pattern.gallery_images.all())
-
-        if form.is_valid() and formset.is_valid():  # Check if both forms are valid
-            # Process pattern form first
-            pattern = form.save(commit=False)
-            pattern.user = request.user
-            instructions_text = form.cleaned_data['instructions']
-            instructions_list = [step.strip() for step in instructions_text.splitlines() if step.strip()]
-            pattern.instructions = json.dumps(instructions_list)
+        
+        # Pass the existing gallery images to the formset
+        formset = GalleryImageFormSet(request.POST, request.FILES, queryset=GalleryImage.objects.filter(pattern=pattern))
+        
+        if form.is_valid() and formset.is_valid():
+            # Save the updated pattern
             pattern.save()
 
-            # Process gallery images
+            # Handle the gallery images
             for gallery_image_form in formset:
-                # Check if the form is marked for deletion
+                # If the DELETE checkbox is checked, delete the image
                 if gallery_image_form.cleaned_data.get('DELETE'):
-                    # Delete the image if marked for deletion
-                    gallery_image_instance = gallery_image_form.instance
-                    if gallery_image_instance.pk:  # Only delete if it exists
-                        gallery_image_instance.delete()
-                elif gallery_image_form.is_valid():  # Validate the individual form before accessing cleaned_data
-                    # Save new or updated images
-                    gallery_image_instance = gallery_image_form.save(commit=False)
-                    gallery_image_instance.pattern = pattern  # Associate with pattern
-                    gallery_image_instance.save()
+                    gallery_image_form.instance.delete()
+                elif gallery_image_form.cleaned_data.get('image'):
+                    # Save the gallery image, which includes the id field
+                    gallery_image_form.save()
 
             messages.success(request, 'Pattern updated successfully!')
             return redirect('pattern_list')
-
-        else:
-            messages.error(request, 'Please correct the errors below.')
-        
     else:
         form = PatternForm(instance=pattern)
-        formset = GalleryImageFormSet(queryset=pattern.gallery_images.all())
+        formset = GalleryImageFormSet(queryset=GalleryImage.objects.filter(pattern=pattern))
 
     return render(request, 'update_pattern.html', {'form': form, 'formset': formset})
+
 
 
 

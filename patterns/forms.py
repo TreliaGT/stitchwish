@@ -41,7 +41,8 @@ class GalleryImageForm(forms.ModelForm):
     image = forms.ImageField(required=False) 
     caption = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Enter caption...'}))
 
-GalleryImageFormSet = modelformset_factory(GalleryImage, form=GalleryImageForm, extra=6 ,  can_delete=True)
+GalleryImageFormSet = modelformset_factory(GalleryImage, form=GalleryImageForm, extra=6)
+
 
 
 

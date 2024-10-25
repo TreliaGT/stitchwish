@@ -34,10 +34,11 @@
 
         <div class="mb-3">
             {{ form.feature_image.label_tag }}
-            {{ form.feature_image }}
-            {% if form.feature_image.instance.pk and form.feature_image.instance.feature_image %}
-                <p>Existing Image: <img src="{{ form.feature_image.instance.feature_image.url }}" alt="Feature Image" class="img-fluid"></p>
-            {% endif %}
+            {% if form.instance.feature_image %}
+            <img src="{{ form.instance.feature_image.url }}" alt="Feature Image" width="150px" />
+        {% endif %}
+        <!-- File input for uploading a new image -->
+        {{ form.feature_image }}
         </div>
 
         <div class="mb-3">
@@ -101,6 +102,12 @@
                             </ul>
                         </div>
                     {% endif %}
+                    {% if gallery_image_form.instance.id %}
+                        <input type="hidden" name="{{ gallery_image_form.prefix }}-id" value="{{ gallery_image_form.instance.id }}">
+                    {% endif %}
+                    {% if gallery_image_form.instance.image %}
+                    <img src="{{ gallery_image_form.instance.image.url }}" alt="Gallery Image" width="150px" />
+                    {% endif %}
 
                     {{ gallery_image_form.image.label_tag }} 
                     {{ gallery_image_form.image }} <!-- Image input -->
@@ -108,13 +115,8 @@
                     {{ gallery_image_form.caption.label_tag }} 
                     {{ gallery_image_form.caption }} <!-- Caption input -->
 
-                   {% if gallery_image_form.instance.pk %}
-                    <p>Existing Image: <img src="{{ gallery_image_form.instance.image.url }}" alt="Gallery Image" class="img-fluid"></p>
-                {% endif %}
-                    {% if gallery_image_form.can_delete %}
-                        <label for="{{ gallery_image_form.prefix }}-DELETE">Delete:</label>
-                        {{ gallery_image_form.DELETE }} <!-- Checkbox for deletion -->
-                    {% endif %}
+                    {{ gallery_image_form.DELETE }}
+                        
                 </div>
             </div>
         </div>
